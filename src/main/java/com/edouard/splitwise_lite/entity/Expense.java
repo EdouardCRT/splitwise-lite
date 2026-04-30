@@ -1,33 +1,39 @@
 package com.edouard.splitwise_lite.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "users")
+@Table(name = "expenses")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+public class Expense {
 
-
-public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @JsonIgnore
     @Column(nullable = false)
-    private String password;
+    private String description;
 
     @Column(nullable = false)
-    private String displayName;
+    private BigDecimal amount;
+
+    @ManyToOne
+    @JoinColumn(name = "paid_by_id", nullable = false)
+    @JsonIgnoreProperties({"password", "expenses"})
+    private User paidBy;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id", nullable = false)
+    @JsonIgnoreProperties({"expenses", "members"})
+    private Group group;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
